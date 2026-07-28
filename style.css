@@ -266,86 +266,204 @@ body {
     color: var(--warning-text);
 }
 
-/* 플레이어 컨트롤 카드 */
+/* ====================================================
+   플레이어 컨트롤 카드 (커스텀 재생바 & 미디어 컨트롤)
+   ==================================================== */
 .player-card {
-    padding: 16px 24px;
+    padding: 20px 24px;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
 }
 
-.player-wrapper {
+.player-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* 타임라인 헤더 */
+.timeline-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 16px;
+    margin-bottom: 8px;
+}
+
+.timeline-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+.status-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 12px;
+    background-color: #e2e8f0;
+    color: var(--text-secondary);
+    transition: all 0.2s ease;
+}
+
+.status-badge.playing {
+    background-color: #dbeafe;
+    color: var(--accent-blue);
+}
+
+.status-badge.completed {
+    background-color: var(--success-bg);
+    color: var(--success-text);
+}
+
+/* 커스텀 프로그레스 슬라이더 */
+.progress-bar-wrapper {
+    position: relative;
+    width: 100%;
+    height: 8px;
+    background-color: #e2e8f0;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+}
+
+.progress-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-indigo) 100%);
+    border-radius: 4px;
+    pointer-events: none;
+    transition: width 0.15s ease-out;
+}
+
+.progress-slider {
+    position: absolute;
+    top: -6px;
+    left: 0;
+    width: 100%;
+    height: 20px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+    z-index: 2;
+    margin: 0;
+}
+
+.progress-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    border: 3px solid var(--accent-indigo);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.progress-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.25);
+    background-color: var(--accent-indigo);
+}
+
+.progress-slider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    border: 3px solid var(--accent-indigo);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.15s ease;
+}
+
+/* 컨트롤 하단 행 */
+.player-controls-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .control-buttons {
     display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
 }
 
+/* 원형 미디어 버튼 */
+.btn-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--border-color);
+    background-color: #ffffff;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s ease;
+}
+
+.btn-circle:hover {
+    background-color: #f1f5f9;
+    color: var(--text-primary);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-circle:active {
+    transform: translateY(0) scale(0.95);
+}
+
+.btn-play {
+    width: 48px;
+    height: 48px;
+    background-color: var(--accent-blue);
+    border: none;
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+}
+
+.btn-play:hover {
+    background-color: var(--accent-blue-hover);
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(37, 99, 235, 0.4);
+}
+
+/* 재생 속도 드롭다운 */
 .speed-control {
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--text-secondary);
+    gap: 8px;
+}
+
+.speed-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
 }
 
 .speed-control select {
     padding: 6px 12px;
-    border-radius: 6px;
+    border-radius: 20px;
     border: 1px solid var(--border-color);
     background-color: #ffffff;
     font-size: 0.85rem;
-    outline: none;
-}
-
-/* 시각화 테이블 영역 (글자 깨짐 방지 및 넉넉한 공간) */
-.table-card {
-    padding: 24px;
-}
-
-.table-wrapper {
-    width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: center;
-    white-space: nowrap; /* 글자가 깨지거나 줄바꿈되는 현상 방지 */
-}
-
-th, td {
-    padding: 12px 16px;
-    border-right: 1px solid var(--border-color);
-    border-bottom: 1px solid var(--border-color);
-    font-size: 0.9rem;
-    min-width: 54px;
-}
-
-th:last-child, td:last-child {
-    border-right: none;
-}
-
-th {
-    background-color: #f1f5f9;
+    font-weight: 600;
     color: var(--text-secondary);
-    font-weight: 700;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
 }
 
-.header-row {
-    background-color: #f8fafc;
-    font-weight: bold;
+.speed-control select:hover {
+    border-color: var(--accent-blue);
 }
-
 /* 테이블 애니메이션 & 하이라이트 */
 @keyframes popIn {
     0% {
