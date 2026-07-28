@@ -7,6 +7,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const nextBtn = document.getElementById('nextBtn');
     const resetBtn = document.getElementById('resetBtn');
     const speedSelect = document.getElementById('speedSelect');
+    const progressSlider = document.getElementById('progressSlider');
+    const progressFill = document.getElementById('progressFill');
+    const timelineStatus = document.getElementById('timelineStatus');
 
     // 시뮬레이션 상태 변수
     let fullHistory = [];
@@ -22,6 +25,13 @@ document.addEventListener('DOMContentLoaded', () => {
     prevBtn.addEventListener('click', stepPrev);
     nextBtn.addEventListener('click', stepNext);
     resetBtn.addEventListener('click', resetSimulation);
+
+    // 슬라이더 조작 시 이동 이벤트
+    progressSlider.addEventListener('input', (e) => {
+        pauseSimulation();
+        currentStep = parseInt(e.target.value, 10);
+        renderUI();
+    });
 
     // 초기 시뮬레이션 실행
     initSimulation();
@@ -70,12 +80,36 @@ document.addEventListener('DOMContentLoaded', () => {
         fullHistory = result.history;
         currentStep = fullSequence.length;
 
+        // 슬라이더 범위 세팅
+        progressSlider.max = fullSequence.length;
+
         renderUI();
     }
 
     function renderUI() {
         updateMetrics();
+        updateProgressBar();
         renderResultTable();
+    }
+
+    function updateProgressBar() {
+        const total = fullSequence.length;
+        progressSlider.value = currentStep;
+        
+        const percentage = total > 0 ? (currentStep / total) * 100 : 0;
+        progressFill.style.width = `${percentage}%`;
+
+        // 상태 배지 텍스트 업데이트
+        if (timer !== null) {
+            timelineStatus.textContent = '재생 중';
+            timelineStatus.className = 'status-badge playing';
+        } else if (currentStep === total) {
+            timelineStatus.textContent = '완료';
+            timelineStatus.className = 'status-badge completed';
+        } else {
+            timelineStatus.textContent = '일시정지';
+            timelineStatus.className = 'status-badge';
+        }
     }
 
     function playSimulation() {
@@ -97,6 +131,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 pauseSimulation();
             }
         }, speed);
+
+        updateProgressBar();
     }
 
     function pauseSimulation() {
@@ -104,6 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
         timer = null;
         playBtn.style.display = 'inline-flex';
         pauseBtn.style.display = 'none';
+        updateProgressBar();
     }
 
     function stepNext() {
