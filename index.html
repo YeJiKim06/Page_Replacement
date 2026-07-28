@@ -7,85 +7,102 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>페이지 교체 알고리즘 시뮬레이터</h1>
-            <p>프레임 수와 참조 순서를 입력하여 각 시점별 메모리 변화와 Page Fault를 시각적으로 확인하세요.</p>
+    <div class="app-container">
+        <!-- 헤더 영역 -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="logo-badge">OS Simulator</div>
+                <h1>페이지 교체 알고리즘 대시보드</h1>
+                <p>프레임 수와 참조 순서를 입력하고 각 시점별 메모리 변화와 Page Fault 발생을 시각적으로 분석해보세요.</p>
+            </div>
         </header>
 
-        <!-- 입력 영역 -->
-        <section class="card input-section">
-            <div class="form-group">
-                <label for="frameCount">최대 프레임 수 (1~7)</label>
-                <input type="number" id="frameCount" min="1" max="7" value="3">
-            </div>
+        <!-- 메인 콘텐츠 영역 -->
+        <main class="app-main">
+            <!-- 입력 설정 카드 -->
+            <section class="card config-card">
+                <div class="card-header">
+                    <h2>시뮬레이션 설정</h2>
+                </div>
+                <div class="config-grid">
+                    <div class="form-group">
+                        <label for="frameCount">최대 프레임 수 (1~7)</label>
+                        <input type="number" id="frameCount" min="1" max="7" value="3">
+                    </div>
 
-            <div class="form-group">
-                <label for="refSequence">페이지 참조 순서 (쉼표 또는 공백으로 구분)</label>
-                <input type="text" id="refSequence" value="7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3, 2, 1, 2, 0, 1, 7, 0, 1">
-            </div>
+                    <div class="form-group span-2">
+                        <label for="refSequence">페이지 참조 순서</label>
+                        <input type="text" id="refSequence" value="7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3, 2, 1, 2, 0, 1, 7, 0, 1" placeholder="예: 7, 0, 1, 2, 0, 3">
+                    </div>
 
-            <div class="form-group">
-                <label for="algorithm">알고리즘 선택</label>
-                <select id="algorithm">
-                    <option value="FIFO">FIFO (First-In First-Out)</option>
-                    <option value="LRU">LRU (Least Recently Used)</option>
-                    <option value="OPT">OPT (Optimal)</option>
-                    <option value="LFU">LFU (Least Frequently Used)</option>
-                </select>
-            </div>
+                    <div class="form-group">
+                        <label for="algorithm">알고리즘 선택</label>
+                        <select id="algorithm">
+                            <option value="FIFO">FIFO (First-In First-Out)</option>
+                            <option value="LRU">LRU (Least Recently Used)</option>
+                            <option value="OPT">OPT (Optimal)</option>
+                            <option value="LFU">LFU (Least Frequently Used)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="config-actions">
+                    <button id="calcBtn" class="btn btn-primary btn-large">시뮬레이션 시작</button>
+                </div>
+            </section>
 
-            <button id="calcBtn" class="btn">시뮬레이션 실행</button>
-        </section>
+            <!-- 결과 요약 지표 카드 -->
+            <section class="metrics-grid">
+                <div class="metric-card">
+                    <span class="metric-label">진행 단계</span>
+                    <span id="stepProgress" class="metric-value">0 / 0</span>
+                </div>
+                <div class="metric-card danger">
+                    <span class="metric-label">Page Faults</span>
+                    <span id="pageFaults" class="metric-value">0</span>
+                </div>
+                <div class="metric-card success">
+                    <span class="metric-label">Hit Rate</span>
+                    <span id="hitRate" class="metric-value">0%</span>
+                </div>
+                <div class="metric-card warning">
+                    <span class="metric-label">Fault Rate</span>
+                    <span id="faultRate" class="metric-value">0%</span>
+                </div>
+            </section>
 
-        <!-- 요약 결과 영역 -->
-        <section class="card summary-section">
-            <div class="metric-card">
-                <span class="metric-title">진행 단계</span>
-                <span id="stepProgress" class="metric-value">0 / 0</span>
-            </div>
-            <div class="metric-card danger">
-                <span class="metric-title">Page Faults</span>
-                <span id="pageFaults" class="metric-value">0</span>
-            </div>
-            <div class="metric-card success">
-                <span class="metric-title">Hit Rate</span>
-                <span id="hitRate" class="metric-value">0%</span>
-            </div>
-            <div class="metric-card warning">
-                <span class="metric-title">Fault Rate</span>
-                <span id="faultRate" class="metric-value">0%</span>
-            </div>
-        </section>
+            <!-- 플레이어 컨트롤 카드 -->
+            <section class="card player-card">
+                <div class="player-wrapper">
+                    <div class="control-buttons">
+                        <button id="resetBtn" class="btn btn-icon-text">🔄 처음부터</button>
+                        <button id="prevBtn" class="btn btn-icon-text">◀ 이전</button>
+                        <button id="playBtn" class="btn btn-accent">▶ 재생</button>
+                        <button id="pauseBtn" class="btn btn-accent" style="display: none;">⏸ 일시정지</button>
+                        <button id="nextBtn" class="btn btn-icon-text">다음 ▶</button>
+                    </div>
+                    <div class="speed-control">
+                        <label for="speedSelect">재생 속도</label>
+                        <select id="speedSelect">
+                            <option value="1200">0.5x (느리게)</option>
+                            <option value="600" selected>1.0x (보통)</option>
+                            <option value="300">2.0x (빠르게)</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
 
-        <!-- 플레이어 조작 컨트롤 영역 -->
-        <section class="card control-section">
-            <div class="control-buttons">
-                <button id="resetBtn" class="btn btn-secondary">🔄 처음부터</button>
-                <button id="prevBtn" class="btn btn-secondary">◀ 이전</button>
-                <button id="playBtn" class="btn btn-primary">▶ 재생</button>
-                <button id="pauseBtn" class="btn btn-secondary" style="display: none;">⏸ 일시정지</button>
-                <button id="nextBtn" class="btn btn-secondary">다음 ▶</button>
-            </div>
-            <div class="speed-control">
-                <label for="speedSelect">재생 속도:</label>
-                <select id="speedSelect">
-                    <option value="1200">0.5x (느리게)</option>
-                    <option value="600" selected>1.0x (보통)</option>
-                    <option value="300">2.0x (빠르게)</option>
-                </select>
-            </div>
-        </section>
-
-        <!-- 시각화 테이블 영역 -->
-        <section class="card table-section">
-            <h2>단계별 메모리 상태</h2>
-            <div class="table-wrapper">
-                <table id="resultTable">
-                    <!-- JavaScript에서 동적으로 생성됩니다 -->
-                </table>
-            </div>
-        </section>
+            <!-- 메모리 변화 테이블 카드 -->
+            <section class="card table-card">
+                <div class="card-header">
+                    <h2>단계별 메모리 상태 타임라인</h2>
+                </div>
+                <div class="table-wrapper">
+                    <table id="resultTable">
+                        <!-- JavaScript에서 동적으로 생성됩니다 -->
+                    </table>
+                </div>
+            </section>
+        </main>
     </div>
 
     <script src="script.js"></script>
