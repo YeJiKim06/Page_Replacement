@@ -10,7 +10,7 @@
     <div class="container">
         <header>
             <h1>페이지 교체 알고리즘 시뮬레이터</h1>
-            <p>프레임 수와 참조 순서를 입력하여 각 시점별 메모리 변화와 Page Fault를 확인하세요.</p>
+            <p>프레임 수와 참조 순서를 입력하여 각 시점별 메모리 변화와 Page Fault를 시각적으로 확인하세요.</p>
         </header>
 
         <!-- 입력 영역 -->
@@ -41,8 +41,8 @@
         <!-- 요약 결과 영역 -->
         <section class="card summary-section">
             <div class="metric-card">
-                <span class="metric-title">총 참조 횟수</span>
-                <span id="totalRefs" class="metric-value">0</span>
+                <span class="metric-title">진행 단계</span>
+                <span id="stepProgress" class="metric-value">0 / 0</span>
             </div>
             <div class="metric-card danger">
                 <span class="metric-title">Page Faults</span>
@@ -55,6 +55,25 @@
             <div class="metric-card warning">
                 <span class="metric-title">Fault Rate</span>
                 <span id="faultRate" class="metric-value">0%</span>
+            </div>
+        </section>
+
+        <!-- 플레이어 조작 컨트롤 영역 -->
+        <section class="card control-section">
+            <div class="control-buttons">
+                <button id="resetBtn" class="btn btn-secondary">🔄 처음부터</button>
+                <button id="prevBtn" class="btn btn-secondary">◀ 이전</button>
+                <button id="playBtn" class="btn btn-primary">▶ 재생</button>
+                <button id="pauseBtn" class="btn btn-secondary" style="display: none;">⏸ 일시정지</button>
+                <button id="nextBtn" class="btn btn-secondary">다음 ▶</button>
+            </div>
+            <div class="speed-control">
+                <label for="speedSelect">재생 속도:</label>
+                <select id="speedSelect">
+                    <option value="1200">0.5x (느리게)</option>
+                    <option value="600" selected>1.0x (보통)</option>
+                    <option value="300">2.0x (빠르게)</option>
+                </select>
             </div>
         </section>
 
