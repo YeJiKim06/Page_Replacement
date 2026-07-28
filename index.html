@@ -157,18 +157,20 @@
 
                     <!-- 프로세스 입력 테이블 -->
                     <div class="process-input-wrapper">
-                        <table class="input-table">
-                            <thead>
-                                <tr>
-                                    <th>프로세스 ID</th>
-                                    <th>도착 시간 (Arrival)</th>
-                                    <th>실행 시간 (Burst)</th>
-                                    <th>우선순위 (낮을수록 높음)</th>
-                                    <th>삭제</th>
-                                </tr>
-                            </thead>
-                            <tbody id="processTableBody"></tbody>
-                        </table>
+                        <div class="table-wrapper">
+                            <table class="input-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 22%;">프로세스 ID</th>
+                                        <th style="width: 22%;">도착 시간 (Arrival)</th>
+                                        <th style="width: 22%;">실행 시간 (Burst)</th>
+                                        <th style="width: 22%;">우선순위 (낮을수록 높음)</th>
+                                        <th style="width: 12%;">삭제</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="processTableBody"></tbody>
+                            </table>
+                        </div>
                         <div class="process-actions">
                             <button id="addProcessBtn" class="btn btn-icon-text">+ 프로세스 추가</button>
                         </div>
