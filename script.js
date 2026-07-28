@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // DOM 요소
+    // DOM 요소 참조
     const calcBtn = document.getElementById('calcBtn');
     const playBtn = document.getElementById('playBtn');
     const pauseBtn = document.getElementById('pauseBtn');
@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let fullHistory = [];
     let fullSequence = [];
     let frameCount = 3;
-    let currentStep = 0; // 0: 시작 전, 1~N: 각 단계
+    let currentStep = 0;
     let timer = null;
 
     // 이벤트 리스너 등록
@@ -49,7 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // 알고리즘 실행
         let result;
         switch (algorithm) {
             case 'FIFO':
@@ -69,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         fullHistory = result.history;
-        currentStep = fullSequence.length; // 기본은 전체 결과 표시
+        currentStep = fullSequence.length;
 
         renderUI();
     }
@@ -79,17 +78,13 @@ document.addEventListener('DOMContentLoaded', () => {
         renderResultTable();
     }
 
-    // ----------------------------------------------------
-    // 재생 컨트롤 로직
-    // ----------------------------------------------------
-
     function playSimulation() {
         if (currentStep >= fullSequence.length) {
-            currentStep = 0; // 이미 끝까지 갔다면 처음부터
+            currentStep = 0;
         }
 
         playBtn.style.display = 'none';
-        pauseBtn.style.display = 'inline-block';
+        pauseBtn.style.display = 'inline-flex';
 
         const speed = parseInt(speedSelect.value, 10);
 
@@ -107,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function pauseSimulation() {
         clearInterval(timer);
         timer = null;
-        playBtn.style.display = 'inline-block';
+        playBtn.style.display = 'inline-flex';
         pauseBtn.style.display = 'none';
     }
 
@@ -134,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ----------------------------------------------------
-    // 알고리즘 계산 로직
+    // 알고리즘 구현부
     // ----------------------------------------------------
 
     function runFIFO(frameCount, sequence) {
@@ -145,14 +140,13 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i < sequence.length; i++) {
             const page = sequence[i];
             let isHit = false;
-            let replacedPage = null;
 
             if (memory.includes(page)) {
                 isHit = true;
             } else {
                 pageFaults++;
                 if (memory.length >= frameCount) {
-                    replacedPage = memory.shift();
+                    memory.shift();
                 }
                 memory.push(page);
             }
@@ -161,7 +155,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 page,
                 memory: [...memory],
                 isHit,
-                replacedPage,
                 pageFaults
             });
         }
@@ -178,7 +171,6 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i < sequence.length; i++) {
             const page = sequence[i];
             let isHit = false;
-            let replacedPage = null;
 
             if (memory.includes(page)) {
                 isHit = true;
@@ -195,7 +187,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
 
-                    replacedPage = lruPage;
                     const removeIndex = memory.indexOf(lruPage);
                     memory.splice(removeIndex, 1);
                 }
@@ -208,7 +199,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 page,
                 memory: [...memory],
                 isHit,
-                replacedPage,
                 pageFaults
             });
         }
@@ -224,7 +214,6 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i < sequence.length; i++) {
             const page = sequence[i];
             let isHit = false;
-            let replacedPage = null;
 
             if (memory.includes(page)) {
                 isHit = true;
@@ -245,7 +234,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
 
-                    replacedPage = pageToReplace;
                     const removeIndex = memory.indexOf(pageToReplace);
                     memory.splice(removeIndex, 1);
                 }
@@ -256,7 +244,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 page,
                 memory: [...memory],
                 isHit,
-                replacedPage,
                 pageFaults
             });
         }
@@ -274,7 +261,6 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i < sequence.length; i++) {
             const page = sequence[i];
             let isHit = false;
-            let replacedPage = null;
 
             counts.set(page, (counts.get(page) || 0) + 1);
 
@@ -298,7 +284,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
 
-                    replacedPage = lfuPage;
                     const removeIndex = memory.indexOf(lfuPage);
                     memory.splice(removeIndex, 1);
                 }
@@ -310,7 +295,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 page,
                 memory: [...memory],
                 isHit,
-                replacedPage,
                 pageFaults
             });
         }
@@ -343,7 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (fullSequence.length === 0) return;
 
-        // 1. 헤더 행 (페이지 참조 순서)
+        // 1. 헤더 행
         const headerRow = document.createElement('tr');
         const firstTh = document.createElement('th');
         firstTh.textContent = '단계 / 참조';
@@ -364,7 +348,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const row = document.createElement('tr');
             const frameLabelTd = document.createElement('td');
             frameLabelTd.textContent = `프레임 ${frameIdx + 1}`;
-            frameLabelTd.style.fontWeight = 'bold';
+            frameLabelTd.style.fontWeight = '600';
             row.appendChild(frameLabelTd);
 
             fullSequence.forEach((_, stepIdx) => {
@@ -377,7 +361,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (pageVal !== undefined) {
                         td.textContent = pageVal;
 
-                        // 현재 마지막 진행 단계 셀 애니메이션 부여
                         if (stepIdx === currentStep - 1) {
                             td.classList.add('cell-active');
                         }
@@ -386,12 +369,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         td.className = 'cell-empty';
                     }
 
-                    // 현재 단계 열 강조
                     if (stepIdx === currentStep - 1) {
                         td.classList.add('col-active');
                     }
                 } else {
-                    td.textContent = ''; // 미진행 단계
+                    td.textContent = '';
                 }
 
                 row.appendChild(td);
@@ -400,7 +382,7 @@ document.addEventListener('DOMContentLoaded', () => {
             table.appendChild(row);
         }
 
-        // 3. 상태(Hit / Fault) 행
+        // 3. 상태 행
         const statusRow = document.createElement('tr');
         statusRow.className = 'header-row';
         const statusLabelTd = document.createElement('td');
