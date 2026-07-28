@@ -46,10 +46,6 @@ header p {
 }
 
 /* 입력 세션 */
-.input-section {
-    display: block;
-}
-
 .form-group {
     margin-bottom: 16px;
 }
@@ -78,21 +74,39 @@ header p {
     border-color: #2563eb;
 }
 
+/* 버튼 공통 스타일 */
 .btn {
-    width: 100%;
-    padding: 12px;
-    background-color: #2563eb;
-    color: #ffffff;
+    padding: 10px 16px;
     border: none;
     border-radius: 6px;
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: background-color 0.2s, transform 0.1s;
 }
 
-.btn:hover {
+.btn:active {
+    transform: scale(0.98);
+}
+
+.btn-primary, .input-section .btn {
+    width: 100%;
+    background-color: #2563eb;
+    color: #ffffff;
+}
+
+.btn-primary:hover, .input-section .btn:hover {
     background-color: #1d4ed8;
+}
+
+.btn-secondary {
+    background-color: #f1f5f9;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+}
+
+.btn-secondary:hover {
+    background-color: #e2e8f0;
 }
 
 /* 요약 결과 지표 영역 */
@@ -141,6 +155,41 @@ header p {
     color: #d97706;
 }
 
+/* 플레이어 조작 컨트롤 영역 */
+.control-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.control-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.control-buttons .btn {
+    width: auto;
+}
+
+.speed-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: #475569;
+    font-weight: 600;
+}
+
+.speed-control select {
+    padding: 6px 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    outline: none;
+}
+
 /* 시각화 테이블 영역 */
 .table-section h2 {
     font-size: 1.2rem;
@@ -162,7 +211,8 @@ table {
 th, td {
     padding: 10px 12px;
     border: 1px solid #e2e8f0;
-    min-width: 44px;
+    min-width: 48px;
+    transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
 th {
@@ -176,15 +226,49 @@ th {
     font-weight: bold;
 }
 
+/* 애니메이션 및 강조 효과 */
+@keyframes popIn {
+    0% {
+        transform: scale(0.7);
+        opacity: 0.2;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.cell-active {
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* 현재 진행 중인 열(Step) 하이라이트 */
+td.col-active, th.col-active {
+    background-color: #eff6ff !important;
+    border-left: 2px solid #2563eb !important;
+    border-right: 2px solid #2563eb !important;
+}
+
+th.col-active {
+    background-color: #dbeafe !important;
+    color: #1e40af;
+}
+
+/* 교체된 페이지 셀 강조 */
+.cell-replaced {
+    border: 2px solid #ef4444 !important;
+    font-weight: bold;
+}
+
 /* 적중(Hit) 및 부재(Fault) 배지 스타일 */
 .status-hit {
-    background-color: #dcfce7;
+    background-color: #dcfce7 !important;
     color: #15803d;
     font-weight: bold;
 }
 
 .status-fault {
-    background-color: #fee2e2;
+    background-color: #fee2e2 !important;
     color: #b91c1c;
     font-weight: bold;
 }
