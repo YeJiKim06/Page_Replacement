@@ -3,133 +3,229 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>페이지 교체 알고리즘 시뮬레이터</title>
+    <title>OS 알고리즘 종합 시뮬레이터</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="app-container">
-        <!-- 헤더 영역 -->
         <header class="app-header">
             <div class="header-content">
                 <div class="logo-badge">OS Simulator</div>
-                <h1>페이지 교체 알고리즘 대시보드</h1>
-                <p>프레임 수와 참조 순서를 입력하고 각 시점별 메모리 변화와 Page Fault 발생을 시각적으로 분석해보세요.</p>
+                <h1>운영체제 알고리즘 대시보드</h1>
+                <p>페이지 교체 및 CPU 프로세스 스케줄링 알고리즘을 시각적으로 분석해보세요.</p>
             </div>
+            
+            <!-- 알고리즘 카테고리 탭 -->
+            <nav class="tab-nav">
+                <button class="tab-btn active" data-tab="page-tab">페이지 교체 시뮬레이터</button>
+                <button class="tab-btn" data-tab="cpu-tab">CPU 스케줄링 시뮬레이터</button>
+            </nav>
         </header>
 
-        <!-- 메인 콘텐츠 영역 -->
         <main class="app-main">
-            <!-- 입력 설정 카드 -->
-            <section class="card config-card">
-                <div class="card-header">
-                    <h2>시뮬레이션 설정</h2>
-                </div>
-                <div class="config-grid">
-                    <div class="form-group">
-                        <label for="frameCount">최대 프레임 수 (1~7)</label>
-                        <input type="number" id="frameCount" min="1" max="7" value="3">
+            <!-- 1. 페이지 교체 탭 콘텐츠 -->
+            <div id="page-tab" class="tab-content active">
+                <section class="card config-card">
+                    <div class="card-header">
+                        <h2>페이지 교체 설정</h2>
                     </div>
-
-                    <div class="form-group span-2">
-                        <label for="refSequence">페이지 참조 순서</label>
-                        <input type="text" id="refSequence" value="7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3, 2, 1, 2, 0, 1, 7, 0, 1" placeholder="예: 7, 0, 1, 2, 0, 3">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="algorithm">알고리즘 선택</label>
-                        <select id="algorithm">
-                            <option value="FIFO">FIFO (First-In First-Out)</option>
-                            <option value="LRU">LRU (Least Recently Used)</option>
-                            <option value="OPT">OPT (Optimal)</option>
-                            <option value="LFU">LFU (Least Frequently Used)</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="config-actions">
-                    <button id="calcBtn" class="btn btn-primary btn-large">시뮬레이션 시작</button>
-                </div>
-            </section>
-
-            <!-- 결과 요약 지표 카드 -->
-            <section class="metrics-grid">
-                <div class="metric-card">
-                    <span class="metric-label">진행 단계</span>
-                    <span id="stepProgress" class="metric-value">0 / 0</span>
-                </div>
-                <div class="metric-card danger">
-                    <span class="metric-label">Page Faults</span>
-                    <span id="pageFaults" class="metric-value">0</span>
-                </div>
-                <div class="metric-card success">
-                    <span class="metric-label">Hit Rate</span>
-                    <span id="hitRate" class="metric-value">0%</span>
-                </div>
-                <div class="metric-card warning">
-                    <span class="metric-label">Fault Rate</span>
-                    <span id="faultRate" class="metric-value">0%</span>
-                </div>
-            </section>
-
-            <!-- 플레이어 컨트롤 카드 (개편됨) -->
-            <section class="card player-card">
-                <div class="player-container">
-                    <!-- 타임라인 프로그레스 바 영역 -->
-                    <div class="timeline-area">
-                        <div class="timeline-header">
-                            <span class="timeline-label">진행 스텝</span>
-                            <span id="timelineStatus" class="status-badge">대기 중</span>
+                    <div class="config-grid">
+                        <div class="form-group">
+                            <label for="frameCount">최대 프레임 수 (1~7)</label>
+                            <input type="number" id="frameCount" min="1" max="7" value="3">
                         </div>
-                        <div class="progress-bar-wrapper">
-                            <input type="range" id="progressSlider" min="0" max="100" value="0" class="progress-slider">
-                            <div id="progressFill" class="progress-fill"></div>
+                        <div class="form-group span-2">
+                            <label for="refSequence">페이지 참조 순서</label>
+                            <input type="text" id="refSequence" value="7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3, 2, 1, 2, 0, 1, 7, 0, 1">
+                        </div>
+                        <div class="form-group">
+                            <label for="algorithm">알고리즘 선택</label>
+                            <select id="algorithm">
+                                <option value="FIFO">FIFO (First-In First-Out)</option>
+                                <option value="LRU">LRU (Least Recently Used)</option>
+                                <option value="OPT">OPT (Optimal)</option>
+                                <option value="LFU">LFU (Least Frequently Used)</option>
+                            </select>
                         </div>
                     </div>
+                    <div class="config-actions">
+                        <button id="calcBtn" class="btn btn-primary btn-large">시뮬레이션 시작</button>
+                    </div>
+                </section>
 
-                    <!-- 컨트롤러 및 속도 설정 영역 -->
-                    <div class="player-controls-row">
-                        <div class="control-buttons">
-                            <button id="resetBtn" class="btn-circle" title="처음부터">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-                            </button>
-                            <button id="prevBtn" class="btn-circle" title="이전 단계">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
-                            </button>
-                            <button id="playBtn" class="btn-circle btn-play" title="재생">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                            </button>
-                            <button id="pauseBtn" class="btn-circle btn-play" title="일시정지" style="display: none;">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
-                            </button>
-                            <button id="nextBtn" class="btn-circle" title="다음 단계">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
-                            </button>
+                <section class="metrics-grid">
+                    <div class="metric-card">
+                        <span class="metric-label">진행 단계</span>
+                        <span id="stepProgress" class="metric-value">0 / 0</span>
+                    </div>
+                    <div class="metric-card danger">
+                        <span class="metric-label">Page Faults</span>
+                        <span id="pageFaults" class="metric-value">0</span>
+                    </div>
+                    <div class="metric-card success">
+                        <span class="metric-label">Hit Rate</span>
+                        <span id="hitRate" class="metric-value">0%</span>
+                    </div>
+                    <div class="metric-card warning">
+                        <span class="metric-label">Fault Rate</span>
+                        <span id="faultRate" class="metric-value">0%</span>
+                    </div>
+                </section>
+
+                <section class="card player-card">
+                    <div class="player-container">
+                        <div class="timeline-area">
+                            <div class="timeline-header">
+                                <span class="timeline-label">진행 스텝</span>
+                                <span id="timelineStatus" class="status-badge">대기 중</span>
+                            </div>
+                            <div class="progress-bar-wrapper">
+                                <input type="range" id="progressSlider" min="0" max="100" value="0" class="progress-slider">
+                                <div id="progressFill" class="progress-fill"></div>
+                            </div>
                         </div>
 
-                        <div class="speed-control">
-                            <span class="speed-label">속도</span>
-                            <div class="select-wrapper">
-                                <select id="speedSelect">
-                                    <option value="1200">0.5x</option>
-                                    <option value="600" selected>1.0x</option>
-                                    <option value="300">2.0x</option>
-                                </select>
+                        <div class="player-controls-row">
+                            <div class="control-buttons">
+                                <button id="resetBtn" class="btn-circle" title="처음부터">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                                </button>
+                                <button id="prevBtn" class="btn-circle" title="이전 단계">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+                                </button>
+                                <button id="playBtn" class="btn-circle btn-play" title="재생">
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                </button>
+                                <button id="pauseBtn" class="btn-circle btn-play" title="일시정지" style="display: none;">
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                                </button>
+                                <button id="nextBtn" class="btn-circle" title="다음 단계">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+                                </button>
+                            </div>
+
+                            <div class="speed-control">
+                                <span class="speed-label">속도</span>
+                                <div class="select-wrapper">
+                                    <select id="speedSelect">
+                                        <option value="1200">0.5x</option>
+                                        <option value="600" selected>1.0x</option>
+                                        <option value="300">2.0x</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </section>
+                </section>
 
-            <!-- 메모리 변화 테이블 카드 -->
-            <section class="card table-card">
-                <div class="card-header">
-                    <h2>단계별 메모리 상태 타임라인</h2>
-                </div>
-                <div class="table-wrapper">
-                    <table id="resultTable">
-                        <!-- JavaScript에서 동적으로 생성됩니다 -->
-                    </table>
-                </div>
-            </section>
+                <section class="card table-card">
+                    <div class="card-header">
+                        <h2>단계별 메모리 상태 타임라인</h2>
+                    </div>
+                    <div class="table-wrapper">
+                        <table id="resultTable"></table>
+                    </div>
+                </section>
+            </div>
+
+            <!-- 2. CPU 스케줄링 탭 콘텐츠 (신규 추가) -->
+            <div id="cpu-tab" class="tab-content">
+                <section class="card config-card">
+                    <div class="card-header">
+                        <h2>CPU 스케줄링 설정</h2>
+                    </div>
+                    <div class="config-grid">
+                        <div class="form-group span-2">
+                            <label for="cpuAlgorithm">스케줄링 알고리즘</label>
+                            <select id="cpuAlgorithm">
+                                <optgroup label="비선점형 (Non-Preemptive)">
+                                    <option value="FCFS">FCFS (First-Come, First-Served)</option>
+                                    <option value="SJF_NP">SJF (Shortest Job First)</option>
+                                    <option value="PRIO_NP">우선순위 (Priority - Non-Preemptive)</option>
+                                </optgroup>
+                                <optgroup label="선점형 (Preemptive)">
+                                    <option value="SRTF">SRTF (Shortest Remaining Time First)</option>
+                                    <option value="PRIO_P">우선순위 (Priority - Preemptive)</option>
+                                    <option value="RR">Round Robin (RR)</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div class="form-group" id="quantumGroup" style="display: none;">
+                            <label for="timeQuantum">Time Quantum (타임 슬라이스)</label>
+                            <input type="number" id="timeQuantum" min="1" value="2">
+                        </div>
+                    </div>
+
+                    <!-- 프로세스 입력 테이블 -->
+                    <div class="process-input-wrapper">
+                        <table id="processInputTable" class="input-table">
+                            <thead>
+                                <tr>
+                                    <th>프로세스 ID</th>
+                                    <th>도착 시간 (Arrival Time)</th>
+                                    <th>실행 시간 (Burst Time)</th>
+                                    <th>우선순위 (낮을수록 높음)</th>
+                                    <th>삭제</th>
+                                </tr>
+                            </thead>
+                            <tbody id="processTableBody">
+                                <!-- JS에서 처리 -->
+                            </tbody>
+                        </table>
+                        <div class="process-actions">
+                            <button id="addProcessBtn" class="btn btn-icon-text">+ 프로세스 추가</button>
+                        </div>
+                    </div>
+
+                    <div class="config-actions">
+                        <button id="runCpuBtn" class="btn btn-primary btn-large">스케줄링 실행</button>
+                    </div>
+                </section>
+
+                <!-- 평균 대기시간 / 평균 반환시간 핵심 결과 카드 -->
+                <section class="metrics-grid">
+                    <div class="metric-card success">
+                        <span class="metric-label">평균 대기 시간 (Avg Waiting Time)</span>
+                        <span id="avgWT" class="metric-value">0.0 ms</span>
+                    </div>
+                    <div class="metric-card warning">
+                        <span class="metric-label">평균 반환 시간 (Avg Turnaround Time)</span>
+                        <span id="avgTAT" class="metric-value">0.0 ms</span>
+                    </div>
+                </section>
+
+                <!-- 간트 차트 영역 -->
+                <section class="card gantt-card">
+                    <div class="card-header">
+                        <h2>간트 차트 (Gantt Chart)</h2>
+                    </div>
+                    <div id="ganttChart" class="gantt-chart-wrapper">
+                        <!-- JS 생성 -->
+                    </div>
+                </section>
+
+                <!-- 프로세스 결과 상세 테이블 -->
+                <section class="card table-card">
+                    <div class="card-header">
+                        <h2>프로세스별 수행 결과</h2>
+                    </div>
+                    <div class="table-wrapper">
+                        <table id="cpuResultTable">
+                            <thead>
+                                <tr>
+                                    <th>프로세스 ID</th>
+                                    <th>도착 시간</th>
+                                    <th>실행 시간</th>
+                                    <th>종료 시간 (Completion)</th>
+                                    <th>반환 시간 (Turnaround)</th>
+                                    <th>대기 시간 (Waiting)</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
         </main>
     </div>
 
